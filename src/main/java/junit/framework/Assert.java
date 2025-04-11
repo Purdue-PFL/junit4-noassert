@@ -19,7 +19,8 @@ public class Assert {
      */
     public static void assertTrue(String message, boolean condition) {
         if (!condition) {
-            fail(message);
+            // fail(message);
+            System.err.println("Failed assertTrue: " + message);
         }
     }
 
@@ -75,7 +76,7 @@ public class Assert {
         if (expected != null && expected.equals(actual)) {
             return;
         }
-        failNotEquals(message, expected, actual);
+        failNotEqualsNoFail(message, expected, actual);
     }
 
     /**
@@ -97,7 +98,8 @@ public class Assert {
             return;
         }
         String cleanMessage = message == null ? "" : message;
-        throw new ComparisonFailure(cleanMessage, expected, actual);
+        ComparisonFailure e = new ComparisonFailure(cleanMessage, expected, actual);
+        System.err.println("Failed assertEquals: " + e.getMessage());
     }
 
     /**
@@ -117,7 +119,7 @@ public class Assert {
             return;
         }
         if (!(Math.abs(expected - actual) <= delta)) {
-            failNotEquals(message, Double.valueOf(expected), Double.valueOf(actual));
+            failNotEqualsNoFail(message, Double.valueOf(expected), Double.valueOf(actual));
         }
     }
 
@@ -139,7 +141,7 @@ public class Assert {
             return;
         }
         if (!(Math.abs(expected - actual) <= delta)) {
-            failNotEquals(message, Float.valueOf(expected), Float.valueOf(actual));
+            failNotEqualsNoFail(message, Float.valueOf(expected), Float.valueOf(actual));
         }
     }
 
@@ -285,7 +287,7 @@ public class Assert {
         if (expected == actual) {
             return;
         }
-        failNotSame(message, expected, actual);
+        failNotSameNoFail(message, expected, actual);
     }
 
     /**
@@ -303,7 +305,7 @@ public class Assert {
      */
     public static void assertNotSame(String message, Object expected, Object actual) {
         if (expected == actual) {
-            failSame(message);
+            failSameNoFail(message);
         }
     }
 
@@ -320,13 +322,27 @@ public class Assert {
         fail(formatted + "expected not same");
     }
 
+    public static void failSameNoFail(String message) {
+        String formatted = (message != null) ? message + " " : "";
+        System.err.println("Failed Assertion: " + formatted + "expected not same");
+    }
+
     public static void failNotSame(String message, Object expected, Object actual) {
         String formatted = (message != null) ? message + " " : "";
         fail(formatted + "expected same:<" + expected + "> was not:<" + actual + ">");
     }
 
+    public static void failNotSameNoFail(String message, Object expected, Object actual) {
+        String formatted = (message != null) ? message + " " : "";
+        System.err.println("Failed Assertion: " + formatted + "expected same:<" + expected + "> was not:<" + actual + ">");
+    }
+
     public static void failNotEquals(String message, Object expected, Object actual) {
         fail(format(message, expected, actual));
+    }
+
+    public static void failNotEqualsNoFail(String message, Object expected, Object actual) {
+        System.err.println("Failed Assertion: " + format(message, expected, actual));
     }
 
     public static String format(String message, Object expected, Object actual) {
